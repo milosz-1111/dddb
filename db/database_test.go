@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+
+	"github.com/milosz-1111/dddb.git/config"
 )
 
 func Default() *Database {
@@ -14,8 +16,8 @@ func Default() *Database {
 			"Key3": {0, 1, 0},
 			"Key4": {1, 0, 1},
 		},
-		Cap:  16,
-		Size: 4,
+		Config: *config.Default(),
+		Length: 4,
 	}
 }
 
@@ -104,8 +106,8 @@ func TestDelete(t *testing.T) {
 		t.Run(fmt.Sprintf("Key: %s", tt.key), func(t *testing.T) {
 			d.Delete(tt.key)
 
-			if d.Size != tt.length {
-				t.Fatalf("Current length: %d, expected length: %d", d.Size, tt.length)
+			if d.Length != tt.length {
+				t.Fatalf("Current length: %d, expected length: %d", d.Length, tt.length)
 			}
 		})
 	}
