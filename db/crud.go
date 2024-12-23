@@ -1,14 +1,18 @@
 package db
 
-import "fmt"
+import (
+	"fmt"
 
-func NewDatabase(cap int) *Database {
+	"github.com/milosz-1111/dddb.git/config"
+)
+
+func NewDatabase(c config.Config) *Database {
 	return &Database{
 		// No Lock initialization is needed, as we can
 		// just use the default value of RWMutex.
-		DB:   make(map[string][]byte),
-		Cap:  cap,
-		Size: 0,
+		DB:     make(map[string][]byte),
+		Config: c,
+		Length: 0,
 	}
 }
 
@@ -30,12 +34,16 @@ func (d *Database) Update(key string, value []byte) error {
 	d.Lock.Lock()
 	defer d.Lock.Unlock()
 
-	if d.Size == d.Cap {
+	if d.Config.NoMaxSize && len(value) > d.Config.MaxSize {
+		return fmt.Errorf("the length of value is larger than allowed")
+	}
+
+	if d.Config.NoMaxCap && d.Length == d.Config.MaxCap {
 		return fmt.Errorf("database has exceeded its maximum capacity")
 	}
 
 	d.DB[key] = value
-	d.Size++
+	d.Length++
 
 	return nil
 }
@@ -45,5 +53,5 @@ func (d *Database) Delete(key string) {
 	defer d.Lock.Unlock()
 
 	delete(d.DB, key)
-	d.Size--
+	d.Length--
 }

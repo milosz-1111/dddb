@@ -2,15 +2,16 @@ package db
 
 import (
 	"sync"
+
+	"github.com/milosz-1111/dddb.git/config"
 )
 
 type Database struct {
 	DB map[string][]byte
 
-	// Cap is needed to ensure, that the database won't
-	// be flooded with unwated data.
-	Cap  int
-	Size int
+	// Config is used to store settings.
+	Config config.Config
+	Length int
 
 	// Lock is used to maintain the ability to perform
 	// concurrent read operations, while protecting the
