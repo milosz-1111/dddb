@@ -34,11 +34,11 @@ func (d *Database) Update(key string, value []byte) error {
 	d.Lock.Lock()
 	defer d.Lock.Unlock()
 
-	if d.Config.NoMaxSize && len(value) > d.Config.MaxSize {
+	if !d.Config.NoMaxSize && len(value) > d.Config.MaxSize {
 		return fmt.Errorf("the length of value is larger than allowed")
 	}
 
-	if d.Config.NoMaxCap && d.Length == d.Config.MaxCap {
+	if !d.Config.NoMaxCap && d.Length == d.Config.MaxCap {
 		return fmt.Errorf("database has exceeded its maximum capacity")
 	}
 
